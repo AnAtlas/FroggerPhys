@@ -9,16 +9,11 @@ import pdb
 import pygame
 from Utilities import Direction
 from Utilities import Vec
-from Vehicle import Suv
-from Vehicle import Coupe
-from Vehicle import Bus
-from Vehicle import Convertable
-from Vehicle import Log
-from Vehicle import DumpTruck
 from Zones import Goal
 from Zones import Water
 from Zones import Wall
-from Animals import Snake
+from EntityFactory import EntityFactory
+from EntityFactory import EntityType
 
 class Level:
     def __init__(self, lvlMgr):
@@ -45,10 +40,9 @@ class Timing:
         self.hit = False
         
 class RowManager:    
-    def __init__(self, lvlMgr, tileY, obj, times):
+    def __init__(self, lvlMgr, entityFactory, times):
         self.levelManager = lvlMgr
-        self.tileY = tileY
-        self.obj = obj
+        self.entityFactory = entityFactory
         self.timings = []
         self.time = 0
         
@@ -67,7 +61,7 @@ class RowManager:
         for t in self.timings:
             if not t.hit and self.time > t.time:
                 t.hit = True
-                self.levelManager.addEntity(copy.deepcopy(self.obj))
+                self.levelManager.addEntity(self.entityFactory.createEntity())
         
 class Level1(Level):
     
@@ -79,18 +73,21 @@ class Level1(Level):
         self.goalAmount = 3
         self.goalSize = 1.2
         self.level = 1
+        
         #NOTE Keep timing length the same to keep in sync
-        #self.rowManagers.append(RowManager(lvlMgr, 2, Log(lvlMgr, 2, 160, 30, Direction['Left']), [5,10]))
-        #self.rowManagers.append(RowManager(lvlMgr, 3, Log(lvlMgr, 3, 60, 120, Direction['Right']), [2,2.75,3.5,7]))
-        #self.rowManagers.append(RowManager(lvlMgr, 4, Log(lvlMgr, 4, 100, 50, Direction['Left']), [5,10,15]))
-        #self.rowManagers.append(RowManager(lvlMgr, 5, Log(lvlMgr, 5, 80, 70, Direction['Right']), [1,3,6,10]))
-        #self.rowManagers.append(RowManager(lvlMgr, 6, Log(lvlMgr, 6, 120, 40, Direction['Left']), [5,10]))
-        self.rowManagers.append(RowManager(lvlMgr, 7, Snake(lvlMgr, 7, 20, Direction['Left']), [4,8]))
-        #self.rowManagers.append(RowManager(lvlMgr, 8, Suv(lvlMgr, 8, Direction['Right']), [4, 6,  10]))
-        #self.rowManagers.append(RowManager(lvlMgr, 9, Coupe(lvlMgr, 9, Direction['Left']), [1, 2, 10]))
-        #self.rowManagers.append(RowManager(lvlMgr, 10, DumpTruck(lvlMgr, 10, Direction['Right']), [4, 8, 10]))
-        #self.rowManagers.append(RowManager(lvlMgr, 11, Bus(lvlMgr, 11, Direction['Left']), [4, 6, 10]))
-        #self.rowManagers.append(RowManager(lvlMgr, 12, Convertable(lvlMgr, 12, Direction['Right']), [3, 6, 10]))
+        self.rowManagers.append(RowManager(lvlMgr, EntityFactory(EntityType['Log'], (lvlMgr, 2, 100, 50, Direction['Left'])), [5,10]))
+        self.rowManagers.append(RowManager(lvlMgr, EntityFactory(EntityType['Log'], (lvlMgr, 3, 200, 40, Direction['Right'])),  [1,7,12]))
+        self.rowManagers.append(RowManager(lvlMgr, EntityFactory(EntityType['Log'], (lvlMgr, 4, 45, 120, Direction['Left'])), [1, 3, 7]))
+        self.rowManagers.append(RowManager(lvlMgr, EntityFactory(EntityType['Log'], (lvlMgr, 5, 100, 40, Direction['Right'])),  [1,4,9]))
+        self.rowManagers.append(RowManager(lvlMgr, EntityFactory(EntityType['Log'], (lvlMgr, 6, 45, 120, Direction['Left'])), [1.5, 4, 7]))
+        
+        self.rowManagers.append(RowManager(lvlMgr, EntityFactory(EntityType['Snake'], (lvlMgr, 7, 20, Direction['Right'])), [1,8]))
+        
+        self.rowManagers.append(RowManager(lvlMgr, EntityFactory(EntityType['Bus'], (lvlMgr, 8,  Direction['Left'])), [5,10]))
+        self.rowManagers.append(RowManager(lvlMgr, EntityFactory(EntityType['Coupe'], (lvlMgr, 9,  Direction['Right'])), [5,10]))
+        self.rowManagers.append(RowManager(lvlMgr, EntityFactory(EntityType['Convertable'], (lvlMgr, 10,  Direction['Left'])), [5,10]))
+        self.rowManagers.append(RowManager(lvlMgr, EntityFactory(EntityType['DumpTruck'], (lvlMgr, 11,  Direction['Right'])), [5,10]))
+        self.rowManagers.append(RowManager(lvlMgr, EntityFactory(EntityType['Suv'], (lvlMgr, 12,  Direction['Left'])), [5,10]))
         
         wallWidth = (((self.mapSize.x * lvlMgr.getTileSize().x) - (self.goalSize * lvlMgr.getTileSize().x * self.goalAmount)) / (self.goalAmount + 1)) / lvlMgr.getTileSize().x
        

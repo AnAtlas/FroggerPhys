@@ -32,7 +32,7 @@ class LevelManager:
     playerMarkedForDeath = False
     
     def __init__(self):
-        self.myfont = pygame.font.SysFont("",12)
+        self.myfont = pygame.font.SysFont("",24)
         
     def playerKilled(self):
         self.playerMarkedForDeath = True
@@ -120,13 +120,13 @@ class LevelManager:
     def checkCollision(self, obj1, obj2):
         if obj1 == None or obj2 == None:
             return False
-        if obj2.x + obj2.width < obj1.x:
+        if obj2.x + obj2.width - 4 < obj1.x:
             return False
-        if obj2.x > obj1.x + obj1.width:
+        if obj2.x > obj1.x + obj1.width - 4:
             return False
-        if obj2.y + obj2.height - 1 < obj1.y:
+        if obj2.y + obj2.height - 4 < obj1.y:
             return False
-        if obj2.y + 1 > obj1.y + obj1.height:
+        if obj2.y + 4 > obj1.y + obj1.height:
             return False
         return True
         
