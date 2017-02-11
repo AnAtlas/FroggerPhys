@@ -19,8 +19,8 @@ clock = pygame.time.Clock()
 
 done = False
 
-levelManager = LevelManager()
-levelManager.loadLevel(1)
+levelManager = LevelManager(screen)
+levelManager.loadLevel(5)
 elapsedTime = 0
 
 while not done:

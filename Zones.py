@@ -5,28 +5,26 @@ Created on Mon Feb  6 14:47:48 2017
 @author: Student
 """
 import pygame
-import pdb
 from Utilities import Color
 from Utilities import Debugging
+from Utilities import Vec
 
 class Zone:
     
     def __init__(self, lvlMgr, width, height, tileX, tileY):
         self.levelManager = lvlMgr
-        self.width = width * self.levelManager.getTileSize().x
-        self.height = height * self.levelManager.getTileSize().y
-        self.x = tileX * self.levelManager.getTileSize().x
-        self.y = tileY * self.levelManager.getTileSize().y
+        self.position = Vec(tileX * self.levelManager.getTileSize().x, tileY * self.levelManager.getTileSize().y)
+        self.size = Vec(width * self.levelManager.getTileSize().x, height * self.levelManager.getTileSize().y)
         self.color = Color['White']
 
     def update(self, dT):
-        self.x = self.x
+        self.position.x = self.position.x
         
     def playerCollided(self, player):
-        self.x = self.x
+        self.position.x = self.position.x
         
     def draw(self, renderTarget):
-        pygame.draw.rect(renderTarget, self.color, pygame.Rect(self.x, self.y, self.width, self.height))
+        pygame.draw.rect(renderTarget, self.color, pygame.Rect(self.position.x, self.position.y, self.size.x, self.size.y))
         
 class Goal(Zone):
     
@@ -45,7 +43,7 @@ class Goal(Zone):
     def draw(self, renderTarget):
         Zone.draw(self,renderTarget)
         if not self.empty:
-            pygame.draw.rect(renderTarget, Color['Green'], pygame.Rect(self.x + self.width / 4, self.y + self.height / 4, self.width / 2, self.height / 2))
+            pygame.draw.rect(renderTarget, Color['Green'], pygame.Rect(self.position.x + self.size.x / 4, self.position.y + self.size.y / 4, self.size.x / 2, self.size.y / 2))
             
 class Water(Zone):
     def __init__(self, lvlMgr, width, height):
@@ -71,4 +69,3 @@ class Wall(Zone):
     def draw(self, renderTarget):
         if Debugging:
             Zone.draw(self,renderTarget)
-        self.x = self.x
